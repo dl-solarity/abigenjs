@@ -3,17 +3,17 @@ import fsp from "fs/promises";
 
 import path from "path";
 
-require("./wasm/wasm_exec_node.cjs");
+import("./wasm/wasm_exec_node.cjs");
 
-export type Artifact = {
+export interface Artifact {
   contractName: string;
   sourceName: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   abi: any;
   bytecode?: string;
-};
+}
 
-export default class Generator {
+export class Generator {
   private readonly lang = "go";
 
   constructor(
@@ -138,5 +138,3 @@ export default class Generator {
     return t;
   }
 }
-
-module.exports = Generator;

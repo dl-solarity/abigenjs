@@ -8,7 +8,7 @@ import path from "path";
 import { Command } from "commander";
 import { fileURLToPath } from "url";
 
-import Generator, { Artifact } from "./abigen/generator.cjs";
+import { Artifact, Generator } from "./abigen/generator.js";
 
 function deriveArtifactFromAbiOnly(filePath: string, data: unknown): Artifact | null {
   const fileBase = path.basename(filePath, path.extname(filePath));
