@@ -1,6 +1,6 @@
 ## AbigenJS
 
-Generate Go bindings from Hardhat artifacts via abigen.wasm, without requiring a Go toolchain.
+Generate Go bindings from artifacts via abigen.wasm, without requiring a Go toolchain.
 
 ### Installation
 
@@ -19,8 +19,11 @@ This package includes:
 abigenjs -o <outDir> -V <v1|v2> [--deployable] [--abigen-path <path>] [--verbose] [--clean] <inputs...>
 ```
 
-- inputs can be JSON files or directories (recursively scanned). Invalid JSON or artifacts missing fields are skipped with warnings.
-- required artifact fields: `contractName`, `sourceName`, `abi`. If `--deployable` is set, `bytecode` is also required.
+- **Defaults**: `-o generated-types/bindings`, `-V v2`.
+- **Inputs** can be JSON files or directories (recursively scanned). Invalid JSON or unreadable files are skipped with warnings.
+- **Artifacts**: expected fields are `contractName`, `sourceName`, and `abi`. If `--deployable` is set, `bytecode` is also required.
+- **ABI-only inputs**: If a JSON file is either (a) a raw ABI array or (b) an object with an `abi` array (and optional `bytecode`), AbigenJS will infer `contractName` from the filename and use an empty `sourceName`. When `--deployable` is passed but `bytecode` is missing, non-deployable bindings will still be generated and a warning will be printed.
+- **abigen.wasm**: A packaged `abigen.wasm` is used by default; `--abigen-path` lets you override the path if needed.
 
 Examples:
 
@@ -29,7 +32,7 @@ Examples:
 abigenjs -o ./gen -V v1 tests/mock_data
 
 # Generate with deployable bindings for a single artifact file
-abigenjs -o ./gen -V v2 --deployable tests/mock_data/ERC20Mock.json
+abigenjs --deployable tests/mock_data/ERC20Mock.json
 
 # Use a custom abigen.wasm path (optional)
 abigenjs -o ./gen -V v1 --abigen-path ./bin/abigen.wasm tests/mock_data

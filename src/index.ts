@@ -125,14 +125,9 @@ async function main(): Promise<void> {
   const program = new Command();
   program
     .name("abigenjs")
-    .description("Generate Go bindings from Hardhat artifacts using abigen.wasm")
-    .addOption(new Option("-o, --out <dir>", "Output directory").makeOptionMandatory())
-    .addOption(
-      new Option("-V, --abigen-version <version>", "abigen version to use").choices([
-        "v1",
-        "v2",
-      ]) as Option,
-    )
+    .description("Generate Go bindings from artifacts using abigen.wasm")
+    .option("-o, --out <dir>", "Output directory", "generated-types/bindings")
+    .option("-V, --abigen-version <version>", "abigen version to use", "v2")
     .option(
       "--deployable",
       "Include deployable methods; requires artifacts to have bytecode",
@@ -155,10 +150,6 @@ async function main(): Promise<void> {
       clean: boolean;
     }>();
     const inputs = parsed.args as string[];
-
-    if (!opts.abigenVersion) {
-      throw new Error("Missing required option: --abigen-version <v1|v2>");
-    }
 
     if (!inputs || inputs.length === 0) {
       throw new Error("Provide at least one file or directory containing artifacts");
