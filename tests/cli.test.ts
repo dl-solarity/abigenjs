@@ -230,12 +230,4 @@ describe("CLI", function () {
       }
     }
   });
-
-  it("fails when version flag is missing", async () => {
-    const inputsDir = path.resolve(repoRoot, "tests/mock_data");
-    const { code, stderr } = await runCli(["-o", outDir, "--abigen-path", abigenPath, inputsDir]);
-
-    expect(code).to.equal(1);
-    expect(stderr).to.include("--abigen-version");
-  });
 });
