@@ -18,6 +18,31 @@ type Artifact = {
   bytecode?: unknown;
 };
 
+function deriveArtifactFromAbiOnly(filePath: string, data: unknown): Artifact | null {
+  const fileBase = path.basename(filePath, path.extname(filePath));
+  if (Array.isArray(data)) {
+    return {
+      contractName: fileBase,
+      sourceName: "",
+      abi: data,
+    } as Artifact;
+  }
+
+  if (data && typeof data === "object") {
+    const anyData = data as Record<string, unknown>;
+    const abi = anyData.abi;
+    if (Array.isArray(abi)) {
+      return {
+        contractName: fileBase,
+        sourceName: "",
+        abi,
+        bytecode: typeof anyData.bytecode === "string" ? anyData.bytecode : undefined,
+      } as Artifact;
+    }
+  }
+  return null;
+}
+
 function formatValidationErrors(filePath: string, errors: string[]): string {
   const rel = path.resolve(filePath);
   return `- ${rel}:\n  - ${errors.join("\n  - ")}`;
@@ -145,26 +170,40 @@ async function main(): Promise<void> {
     }
 
     const artifacts: Artifact[] = [];
-    const warnings: string[] = [];
+    const notices: string[] = [];
+    const validationFailures: string[] = [];
     const includeDeployable = Boolean(opts.deployable);
 
     for (const file of candidateFiles) {
       try {
         const data = (await readJson(file)) as Artifact;
-        const errs = validateArtifact(data, includeDeployable);
+        let errs = validateArtifact(data, includeDeployable);
         if (errs.length > 0) {
-          warnings.push(formatValidationErrors(file, errs));
-          continue;
+          const fallback = deriveArtifactFromAbiOnly(file, data as unknown);
+          if (fallback) {
+            // Only require ABI for fallback; generate non-deployable if bytecode is absent
+            if (includeDeployable && typeof fallback.bytecode !== "string") {
+              notices.push(`- ${path.resolve(file)}: --deployable passed but ABI-only input; generated non-deployable bindings only`);
+            }
+            artifacts.push(fallback as Artifact);
+          } else {
+            validationFailures.push(formatValidationErrors(file, errs));
+          }
+        } else {
+          // Valid full artifact, proceed
+          artifacts.push(data);
         }
-        artifacts.push(data);
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
-        warnings.push(`- ${file}: ${msg}`);
+        validationFailures.push(`- ${path.resolve(file)}: ${msg}`);
       }
     }
 
-    if (warnings.length > 0) {
-      console.warn(`Some inputs were skipped due to validation issues:\n${warnings.join("\n")}`);
+    if (validationFailures.length > 0) {
+      console.warn(`Some inputs were skipped due to validation issues:\n${validationFailures.join("\n")}`);
+    }
+    if (notices.length > 0) {
+      console.warn(`Warnings:\n${notices.join("\n")}`);
     }
 
     if (artifacts.length === 0) {

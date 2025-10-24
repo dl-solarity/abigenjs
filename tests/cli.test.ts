@@ -188,6 +188,49 @@ describe("CLI", function () {
     }
   });
 
+  it("generates at out dir root when json contains only abi", async () => {
+    const abiOnlyDir = path.join(
+      os.tmpdir(),
+      `abigenjs-cli-abi-only-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    );
+    await fsp.mkdir(abiOnlyDir, { recursive: true });
+    try {
+      const abiOnlyObj = { abi: ERC20.abi };
+      const abiOnlyFile = path.join(abiOnlyDir, "OnlyAbi.json");
+      await fsp.writeFile(abiOnlyFile, JSON.stringify(abiOnlyObj));
+
+      // Also support raw ABI array JSON
+      const rawAbiFile = path.join(abiOnlyDir, "OnlyRawAbi.json");
+      await fsp.writeFile(rawAbiFile, JSON.stringify(ERC20.abi));
+
+      const { code, stderr } = await runCli([
+        "-o",
+        outDir,
+        "-V",
+        "v1",
+        "--abigen-path",
+        abigenPath,
+        abiOnlyDir,
+      ]);
+
+      expect(code).to.equal(0, `stderr: ${stderr}`);
+
+      const genPath1 = path.join(outDir, "OnlyAbi.go");
+      expect(fileExistsSync(genPath1)).to.equal(true, `${genPath1} should exist at outDir root`);
+      const content1 = await fsp.readFile(genPath1, "utf8");
+      expect(content1.length).to.be.greaterThan(0);
+
+      const genPath2 = path.join(outDir, "OnlyRawAbi.go");
+      expect(fileExistsSync(genPath2)).to.equal(true, `${genPath2} should exist at outDir root`);
+      const content2 = await fsp.readFile(genPath2, "utf8");
+      expect(content2.length).to.be.greaterThan(0);
+    } finally {
+      if (fileExistsSync(abiOnlyDir)) {
+        await fsp.rm(abiOnlyDir, { recursive: true, force: true });
+      }
+    }
+  });
+
   it("fails when version flag is missing", async () => {
     const inputsDir = path.resolve(repoRoot, "tests/mock_data");
     const { code, stderr } = await runCli(["-o", outDir, "--abigen-path", abigenPath, inputsDir]);
