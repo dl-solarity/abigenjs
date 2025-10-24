@@ -1,13 +1,20 @@
+import fs from "fs";
+import fsp from "fs/promises";
+
+import path from "path";
+
+import { Artifact } from "../index";
+
 require("./wasm/wasm_exec_node.cjs");
 
-const fs = require("fs");
-const fsp = require("fs/promises");
-const path = require("path");
+export default class Generator {
+  private readonly lang = "go";
 
-module.exports = class Generator {
-  lang = "go";
-
-  constructor(outDir, abigenVersion, abigenPath = "./node_modules/abigenjs/bin/abigen.wasm") {
+  constructor(
+    private readonly outDir: string,
+    private readonly abigenVersion: string,
+    private readonly abigenPath: string = "./node_modules/abigenjs/bin/abigen.wasm",
+  ) {
     this.outDir = path.resolve(outDir);
 
     this.abigenVersion = abigenVersion;
@@ -18,7 +25,7 @@ module.exports = class Generator {
     this.abigenPath = path.resolve(abigenPath);
   }
 
-  async clean() {
+  public async clean(): Promise<void> {
     if (!fs.existsSync(this.outDir)) {
       return;
     }
@@ -32,7 +39,11 @@ module.exports = class Generator {
     await fsp.rm(this.outDir, { recursive: true });
   }
 
-  async generate(artifacts, deployable, verbose) {
+  public async generate(
+    artifacts: Artifact[],
+    deployable: boolean,
+    verbose: boolean,
+  ): Promise<void> {
     this._verboseLog(
       `Generating bindings into ${this.outDir} ${deployable ? "with" : "without"} deployable bindings\n`,
       verbose,
@@ -46,7 +57,7 @@ module.exports = class Generator {
 
       const packageName = contract.replaceAll("-", "").replaceAll("_", "").toLowerCase();
 
-      const sourceDir = typeof source === "string" ? path.dirname(source) : "";
+      const sourceDir = path.dirname(source);
       const useFlatOut = !source || source.length === 0 || sourceDir === ".";
       const genDir = useFlatOut ? `${this.outDir}` : `${this.outDir}/${sourceDir}/${packageName}`;
       const genPath = `${genDir}/${contract}.${this.lang}`;
@@ -66,7 +77,7 @@ module.exports = class Generator {
       await fsp.mkdir(genDir, { recursive: true });
       await fsp.writeFile(abiPath, JSON.stringify(artifact.abi));
 
-      if (deployable && typeof artifact.bytecode === "string" && artifact.bytecode.length > 0) {
+      if (deployable && artifact.bytecode && artifact.bytecode.length > 0) {
         const binPath = `${this.outDir}/${contract}.bin`;
         const argvBin = `${argv} --bin ${binPath}`;
 
@@ -81,29 +92,36 @@ module.exports = class Generator {
     }
   }
 
-  _verboseLog(msg, verbose) {
+  private _verboseLog(msg: string, verbose: boolean): void {
     if (verbose) {
       console.log(msg);
     }
   }
 
-  async abigen(path, argv) {
-    const go = new Go();
+  private async abigen(path: string, argv: string[]): Promise<void> {
+    const go = new (globalThis as any).Go();
 
     go.argv = argv;
     go.env = Object.assign({ TMPDIR: require("os").tmpdir() }, process.env);
 
     try {
-      const abigenObj = await WebAssembly.instantiate(await fsp.readFile(path), go.importObject);
+      const abigenObj = await (globalThis as any).WebAssembly.instantiate(
+        await fsp.readFile(path),
+        go.importObject,
+      );
 
       await go.run(abigenObj.instance);
       go._pendingEvent = { id: 0 };
-    } catch (e) {
-      throw new Error(e.message);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        throw new Error(e.message);
+      }
+
+      throw new Error(`Unknown error: ${String(e)}`);
     }
   }
 
-  _sanitizeTypeName(name) {
+  private _sanitizeTypeName(name: string): string {
     // remove non-alphanumeric characters
     let t = String(name).replace(/[^a-zA-Z0-9]/g, "");
     if (t.length === 0) t = "Contract";
@@ -113,4 +131,6 @@ module.exports = class Generator {
     t = t.charAt(0).toUpperCase() + t.slice(1);
     return t;
   }
-};
+}
+
+module.exports = Generator;

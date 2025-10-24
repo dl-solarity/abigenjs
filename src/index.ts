@@ -6,17 +6,16 @@ import fsp from "fs/promises";
 import path from "path";
 
 import { Command } from "commander";
-import { createRequire } from "module";
 import { fileURLToPath } from "url";
 
-const require = createRequire(import.meta.url);
-const Generator = require("./abigen/generator.cjs");
+import Generator from "./abigen/generator.cjs";
 
-type Artifact = {
-  contractName: unknown;
-  sourceName: unknown;
-  abi: unknown;
-  bytecode?: unknown;
+export type Artifact = {
+  contractName: string;
+  sourceName: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  abi: any;
+  bytecode?: string;
 };
 
 function deriveArtifactFromAbiOnly(filePath: string, data: unknown): Artifact | null {
@@ -162,7 +161,7 @@ async function main(): Promise<void> {
     const parsed = await program.parseAsync(process.argv);
     const opts = parsed.opts<{
       out: string;
-      abigenVersion?: "v1" | "v2";
+      abigenVersion: "v1" | "v2";
       deployable?: boolean;
       abigenPath?: string;
       verbose: boolean;

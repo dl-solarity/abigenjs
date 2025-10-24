@@ -12,9 +12,7 @@ const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// CommonJS modules loaded via createRequire in ESM context
-
-const Generator = require("../src/abigen/generator.cjs");
+import Generator from "../src/abigen/generator.cjs";
 
 const ERC20 = require("./mock_data/ERC20Mock.json");
 
@@ -32,7 +30,8 @@ function fileExistsSync(p: string): boolean {
 describe("Generator", function () {
   this.timeout(120000);
 
-  const artifacts = [ERC20, SBT] as const;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const artifacts = [ERC20, SBT] as unknown as any[];
   const abigenPath = path.resolve(__dirname, "../bin/abigen.wasm");
   let outDir: string;
 
