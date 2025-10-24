@@ -2,8 +2,10 @@
 
 import fs from "fs";
 import fsp from "fs/promises";
+
 import path from "path";
-import { Command, Option } from "commander";
+
+import { Command } from "commander";
 import { createRequire } from "module";
 import { fileURLToPath } from "url";
 
@@ -168,13 +170,15 @@ async function main(): Promise<void> {
     for (const file of candidateFiles) {
       try {
         const data = (await readJson(file)) as Artifact;
-        let errs = validateArtifact(data, includeDeployable);
+        const errs = validateArtifact(data, includeDeployable);
         if (errs.length > 0) {
           const fallback = deriveArtifactFromAbiOnly(file, data as unknown);
           if (fallback) {
             // Only require ABI for fallback; generate non-deployable if bytecode is absent
             if (includeDeployable && typeof fallback.bytecode !== "string") {
-              notices.push(`- ${path.resolve(file)}: --deployable passed but ABI-only input; generated non-deployable bindings only`);
+              notices.push(
+                `- ${path.resolve(file)}: --deployable passed but ABI-only input; generated non-deployable bindings only`,
+              );
             }
             artifacts.push(fallback as Artifact);
           } else {
@@ -191,7 +195,9 @@ async function main(): Promise<void> {
     }
 
     if (validationFailures.length > 0) {
-      console.warn(`Some inputs were skipped due to validation issues:\n${validationFailures.join("\n")}`);
+      console.warn(
+        `Some inputs were skipped due to validation issues:\n${validationFailures.join("\n")}`,
+      );
     }
     if (notices.length > 0) {
       console.warn(`Warnings:\n${notices.join("\n")}`);
