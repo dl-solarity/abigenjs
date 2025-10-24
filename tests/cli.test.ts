@@ -92,7 +92,7 @@ describe("CLI", function () {
     const { code, stderr } = await runCli([
       "-o",
       outDir,
-      "-V",
+      "-v",
       "v1",
       "--abigen-path",
       abigenPath,
@@ -119,7 +119,7 @@ describe("CLI", function () {
     const { code, stderr } = await runCli([
       "-o",
       outDir,
-      "-V",
+      "-v",
       "v2",
       "--deployable",
       "--abigen-path",
@@ -164,7 +164,7 @@ describe("CLI", function () {
       const { code, stderr } = await runCli([
         "-o",
         outDir,
-        "-V",
+        "-v",
         "v1",
         "--abigen-path",
         abigenPath,
@@ -206,7 +206,7 @@ describe("CLI", function () {
       const { code, stderr } = await runCli([
         "-o",
         outDir,
-        "-V",
+        "-v",
         "v1",
         "--abigen-path",
         abigenPath,
