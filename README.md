@@ -16,20 +16,20 @@ This package includes:
 ### CLI Usage
 
 ```bash
-abigenjs -o <outDir> -V <v1|v2> [--deploy] [--abigen-path <path>] [--verbose] [--clean] <inputs...>
+abigenjs -o <outDir> -V <v1|v2> [--deployable] [--abigen-path <path>] [--verbose] [--clean] <inputs...>
 ```
 
 - inputs can be JSON files or directories (recursively scanned). Invalid JSON or artifacts missing fields are skipped with warnings.
-- required artifact fields: `contractName`, `sourceName`, `abi`. If `--deploy` is set, `bytecode` is also required.
+- required artifact fields: `contractName`, `sourceName`, `abi`. If `--deployable` is set, `bytecode` is also required.
 
 Examples:
 
 ```bash
-# Generate without deploy from a directory of artifacts
+# Generate without deployable bindings from a directory of artifacts
 abigenjs -o ./gen -V v1 tests/mock_data
 
-# Generate with deploy for a single artifact file
-abigenjs -o ./gen -V v2 --deploy tests/mock_data/ERC20Mock.json
+# Generate with deployable bindings for a single artifact file
+abigenjs -o ./gen -V v2 --deployable tests/mock_data/ERC20Mock.json
 
 # Use a custom abigen.wasm path (optional)
 abigenjs -o ./gen -V v1 --abigen-path ./bin/abigen.wasm tests/mock_data

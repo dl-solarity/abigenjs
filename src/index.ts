@@ -106,7 +106,7 @@ async function main(): Promise<void> {
         "v2",
       ]) as Option,
     )
-    .option("--deploy", "Include deploy methods; requires artifacts to have bytecode", false)
+    .option("--deployable", "Include deployable methods; requires artifacts to have bytecode", false)
     .option("--abigen-path <path>", "Path to abigen.wasm (defaults to packaged wasm)")
     .option("--verbose", "Enable verbose logging", false)
     .option("--clean", "Remove output directory before generating", false)
@@ -118,7 +118,7 @@ async function main(): Promise<void> {
     const opts = parsed.opts<{
       out: string;
       abigenVersion?: "v1" | "v2";
-      deploy: boolean;
+      deployable?: boolean;
       abigenPath?: string;
       verbose: boolean;
       clean: boolean;
@@ -140,11 +140,12 @@ async function main(): Promise<void> {
 
     const artifacts: Artifact[] = [];
     const warnings: string[] = [];
+    const includeDeployable = Boolean(opts.deployable);
 
     for (const file of candidateFiles) {
       try {
         const data = (await readJson(file)) as Artifact;
-        const errs = validateArtifact(data, opts.deploy);
+        const errs = validateArtifact(data, includeDeployable);
         if (errs.length > 0) {
           warnings.push(formatValidationErrors(file, errs));
           continue;
@@ -177,7 +178,7 @@ async function main(): Promise<void> {
       ? new Generator(opts.out, opts.abigenVersion, resolvedAbigenPath)
       : new Generator(opts.out, opts.abigenVersion);
 
-    await generator.generate(artifacts, opts.deploy, opts.verbose);
+    await generator.generate(artifacts, includeDeployable, opts.verbose);
 
     console.log(`Generated ${artifacts.length} binding(s) into ${path.resolve(opts.out)}`);
   } catch (err) {

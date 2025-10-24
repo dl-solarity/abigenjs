@@ -86,7 +86,7 @@ describe("CLI", function () {
     }
   });
 
-  it("generates from directory without deploy", async () => {
+  it("generates from directory without deployable", async () => {
     const inputsDir = path.resolve(repoRoot, "tests/mock_data");
 
     const { code, stderr } = await runCli([
@@ -113,7 +113,7 @@ describe("CLI", function () {
     }
   });
 
-  it("generates from directory with deploy", async () => {
+  it("generates from directory with deployable", async () => {
     const inputsDir = path.resolve(repoRoot, "tests/mock_data");
 
     const { code, stderr } = await runCli([
@@ -121,7 +121,7 @@ describe("CLI", function () {
       outDir,
       "-V",
       "v2",
-      "--deploy",
+      "--deployable",
       "--abigen-path",
       abigenPath,
       inputsDir,
