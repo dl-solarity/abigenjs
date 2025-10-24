@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import fs from "fs";
 import fsp from "fs/promises";
 import path from "path";
@@ -34,7 +36,7 @@ function validateArtifact(artifact: Artifact, requireBytecode: boolean): string[
   }
   if (requireBytecode) {
     if (typeof artifact.bytecode !== "string" || artifact.bytecode.length === 0) {
-      errors.push("Missing or invalid field: bytecode (string) required when --deploy is set");
+      errors.push("Missing or invalid field: bytecode (string) required when --deployable is set");
     }
   }
   return errors;
@@ -106,7 +108,11 @@ async function main(): Promise<void> {
         "v2",
       ]) as Option,
     )
-    .option("--deployable", "Include deployable methods; requires artifacts to have bytecode", false)
+    .option(
+      "--deployable",
+      "Include deployable methods; requires artifacts to have bytecode",
+      false,
+    )
     .option("--abigen-path <path>", "Path to abigen.wasm (defaults to packaged wasm)")
     .option("--verbose", "Enable verbose logging", false)
     .option("--clean", "Remove output directory before generating", false)

@@ -2,6 +2,7 @@
   "name": "abigenjs",
   "description": "Generate Go bindings from artifacts via abigen.wasm",
   "version": "0.1.0",
+  "type": "module",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "bin": {
