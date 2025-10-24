@@ -1,7 +1,7 @@
 {
   "name": "abigenjs",
   "description": "Generate Go bindings from artifacts via abigen.wasm",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -12,7 +12,8 @@
     ".": {
       "types": "./dist/src/index.d.ts",
       "default": "./dist/src/index.js"
-    }
+    },
+    "./generator.cjs": "./dist/src/abigen/generator.cjs"
   },
   "files": [
     "bin/",
@@ -42,7 +43,7 @@
   "scripts": {
     "prepare": "husky",
     "prepack": "npm run build",
-    "build": "tsc --build . && cp -r src/abigen dist/src/abigen",
+    "build": "tsc --build .",
     "lint": "prettier --check . && node --import tsx/esm ./node_modules/eslint/bin/eslint.js .",
     "test": "node --import tsx/esm ./node_modules/mocha/bin/mocha.js \"tests/**/*.test.ts\" -t 120000",
     "lint-fix": "prettier --write . && node --import tsx/esm ./node_modules/eslint/bin/eslint.js . --fix",
