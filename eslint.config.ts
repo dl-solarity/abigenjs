@@ -44,6 +44,14 @@ export default [
     },
   },
 
+  // Allow shebang in the CLI entry file
+  {
+    files: ["src/index.ts"],
+    rules: {
+      "n/hashbang": "off",
+    },
+  },
+
   // Ignores
   {
     ignores: [
