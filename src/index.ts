@@ -8,15 +8,7 @@ import path from "path";
 import { Command } from "commander";
 import { fileURLToPath } from "url";
 
-import Generator from "./abigen/generator.cjs";
-
-export type Artifact = {
-  contractName: string;
-  sourceName: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  abi: any;
-  bytecode?: string;
-};
+import Generator, { Artifact } from "./abigen/generator.cjs";
 
 function deriveArtifactFromAbiOnly(filePath: string, data: unknown): Artifact | null {
   const fileBase = path.basename(filePath, path.extname(filePath));

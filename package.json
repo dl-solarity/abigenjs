@@ -13,7 +13,10 @@
       "types": "./dist/src/index.d.ts",
       "default": "./dist/src/index.js"
     },
-    "./generator.cjs": "./dist/src/abigen/generator.cjs"
+    "./generator.cjs": {
+      "types": "./dist/src/abigen/generator.d.cts",
+      "default": "./dist/src/abigen/generator.cjs"
+    }
   },
   "files": [
     "bin/",
@@ -35,7 +38,7 @@
     "solarity"
   ],
   "author": "Distributed Lab",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "bugs": {
     "url": "https://github.com/dl-solarity/abigenjs/issues"
   },
