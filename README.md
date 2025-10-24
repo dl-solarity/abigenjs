@@ -1,3 +1,5 @@
+[![npm](https://img.shields.io/npm/v/abigenjs.svg)](https://www.npmjs.com/package/abigenjs)
+
 ## AbigenJS
 
 Generate Go bindings from artifacts via abigen.wasm compiled from [Abigen](https://geth.ethereum.org/docs/tools/abigen), without requiring the Go toolchain.
@@ -16,7 +18,7 @@ This package includes:
 ### CLI Usage
 
 ```bash
-abigenjs [-o <outDir>] [-v <v1|v2>] [--deployable] [--abigen-path <path>] [--verbose|--quiet] [--clean] <paths to JSONs/dirs...>
+abigenjs <paths to JSONs/dirs...> [-o <outDir>] [-v <v1|v2>] [--deployable] [--abigen-path <path>] [--verbose|--quiet] [--clean]
 ```
 
 - **Defaults**: `-o generated-types/bindings`, `-v v2`.
