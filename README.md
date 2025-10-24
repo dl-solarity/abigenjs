@@ -5,7 +5,7 @@ Generate Go bindings from artifacts via abigen.wasm compiled from [Abigen](https
 ### Installation
 
 ```bash
-npm install --save-dev abigenjs
+npm install -g abigenjs
 ```
 
 This package includes:
