@@ -47,7 +47,7 @@ abigenjs -o ./gen -v v1 --abigen-path ./bin/abigen.wasm tests/mock_data
 // ESM context
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-const Generator = require("abigenjs/dist/src/abigen/generator.cjs");
+const Generator = require("abigenjs/generator.cjs");
 
 const gen = new Generator("./gen", "v1");
 await gen.clean();
