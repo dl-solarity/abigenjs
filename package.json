@@ -13,9 +13,9 @@
       "types": "./dist/src/index.d.ts",
       "default": "./dist/src/index.js"
     },
-    "./generator.cjs": {
-      "types": "./dist/src/abigen/generator.d.cts",
-      "default": "./dist/src/abigen/generator.cjs"
+    "./generator": {
+      "types": "./dist/src/abigen/generator.d.ts",
+      "default": "./dist/src/abigen/generator.js"
     }
   },
   "files": [
