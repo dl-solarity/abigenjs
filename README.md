@@ -45,7 +45,7 @@ const Generator = require("abigenjs/dist/src/abigen/generator.cjs");
 
 const gen = new Generator("./gen", "v1");
 await gen.clean();
-await gen.generate([artifact1, artifact2], /* deploy */ false, /* verbose */ false);
+await gen.generate([artifact1, artifact2], /* deployable */ false, /* verbose */ false);
 ```
 
 ### Development
