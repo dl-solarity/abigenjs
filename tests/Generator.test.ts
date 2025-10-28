@@ -1,24 +1,17 @@
 import os from "os";
 import path from "path";
 
-import fs from "fs";
+import fs from "fs-extra";
 import fsp from "fs/promises";
 
 import { expect } from "chai";
-import { createRequire } from "module";
+
 import { fileURLToPath } from "url";
 
-const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// CommonJS modules loaded via createRequire in ESM context
-
-const Generator = require("../src/abigen/generator.cjs");
-
-const ERC20 = require("./mock_data/ERC20Mock.json");
-
-const SBT = require("./mock_data/SBTMock.json");
+import { Generator } from "../src/abigen/generator.js";
 
 function fileExistsSync(p: string): boolean {
   try {
@@ -32,9 +25,17 @@ function fileExistsSync(p: string): boolean {
 describe("Generator", function () {
   this.timeout(120000);
 
-  const artifacts = [ERC20, SBT] as const;
-  const abigenPath = path.resolve(__dirname, "../bin/abigen.wasm");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const artifacts: any[] = [];
+
   let outDir: string;
+
+  const abigenPath = path.resolve(__dirname, "../bin/abigen.wasm");
+
+  before(async () => {
+    artifacts.push(fs.readJsonSync(path.join(__dirname, "./mock_data/SBTMock.json")));
+    artifacts.push(fs.readJsonSync(path.join(__dirname, "./mock_data/ERC20Mock.json")));
+  });
 
   beforeEach(async () => {
     outDir = path.join(

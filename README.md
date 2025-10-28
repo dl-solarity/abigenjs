@@ -44,10 +44,7 @@ abigenjs -o ./gen -v v1 --abigen-path ./bin/abigen.wasm tests/mock_data
 ### Programmatic API
 
 ```ts
-// ESM context
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const Generator = require("abigenjs/generator.cjs");
+import { Generator, Artifact } from "abigenjs/generator";
 
 const gen = new Generator("./gen", "v1");
 await gen.clean();

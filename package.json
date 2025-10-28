@@ -1,7 +1,7 @@
 {
   "name": "abigenjs",
   "description": "Generate Go bindings from artifacts via abigen.wasm",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "type": "module",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -13,7 +13,10 @@
       "types": "./dist/src/index.d.ts",
       "default": "./dist/src/index.js"
     },
-    "./generator.cjs": "./dist/src/abigen/generator.cjs"
+    "./generator": {
+      "types": "./dist/src/abigen/generator.d.ts",
+      "default": "./dist/src/abigen/generator.js"
+    }
   },
   "files": [
     "bin/",
@@ -35,7 +38,7 @@
     "solarity"
   ],
   "author": "Distributed Lab",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "bugs": {
     "url": "https://github.com/dl-solarity/abigenjs/issues"
   },
@@ -45,23 +48,26 @@
     "prepack": "npm run build",
     "build": "tsc --build .",
     "lint": "prettier --check . && node --import tsx/esm ./node_modules/eslint/bin/eslint.js .",
-    "test": "node --import tsx/esm ./node_modules/mocha/bin/mocha.js \"tests/**/*.test.ts\" -t 120000",
+    "test": "node --import ./tests/loader-bootstrap.mjs --no-deprecation ./node_modules/mocha/bin/mocha.js \"tests/**/*.test.ts\" -t 120000",
     "lint-fix": "prettier --write . && node --import tsx/esm ./node_modules/eslint/bin/eslint.js . --fix",
     "publish": "npm run build && npm publish --access public"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "@types/chai": "^5.2.3",
+    "@types/fs-extra": "^11.0.4",
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.9.1",
     "chai": "^6.2.0",
     "eslint": "^9.13.0",
     "eslint-plugin-n": "^17.10.3",
+    "fs-extra": "^11.3.2",
     "globals": "^15.11.0",
     "husky": "^9.1.7",
     "jiti": "^2.0.0",
     "mocha": "^11.7.4",
     "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.12.2"
